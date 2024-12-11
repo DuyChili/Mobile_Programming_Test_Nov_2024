@@ -96,14 +96,20 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<User> newUsers = response.body();
 
+                    // Kiểm tra trùng lặp và thêm người dùng mới
                     if (userAdapter == null) {
                         userAdapter = new UserAdapter(MainActivity.this, newUsers);
                         binding.rvUsers.setAdapter(userAdapter);
                     } else {
-                        userAdapter.addUsers(newUsers);
+                        for (User newUser : newUsers) {
+                            // Dùng hàm isUserDuplicate để kiểm tra trùng lặp
+                            if (!isUserDuplicate(userAdapter.getUsers(), newUser)) {
+                                userAdapter.addUser(newUser);  // addUser là phương thức bạn cần định nghĩa trong adapter để thêm 1 người dùng vào
+                            }
+                        }
                     }
 
-                    // Lưu vào SharedPreferences với Content-Type
+                    // Lưu vào SharedPreferences
                     sharedPreferencesHelper.saveUsersToPreferences(userAdapter.getUsers());
 
                     // Cập nhật `since` với ID user cuối cùng
@@ -124,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     private void fetchUsers() {
         binding.progressBar.setVisibility(View.VISIBLE);
 
@@ -134,11 +141,23 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<User> users = response.body();
-                    userAdapter = new UserAdapter(MainActivity.this, users);
-                    binding.rvUsers.setAdapter(userAdapter);
 
-                    // Lưu danh sách vào SharedPreferences với Content-Type
-                    sharedPreferencesHelper.saveUsersToPreferences(users);
+                    // Nếu adapter chưa được khởi tạo, khởi tạo và gán
+                    if (userAdapter == null) {
+                        userAdapter = new UserAdapter(MainActivity.this, users);
+                        binding.rvUsers.setAdapter(userAdapter);
+                    } else {
+                        // Kiểm tra trùng lặp trước khi thêm
+                        for (User newUser : users) {
+                            // Dùng hàm isUserDuplicate để kiểm tra trùng lặp
+                            if (!isUserDuplicate(userAdapter.getUsers(), newUser)) {
+                                userAdapter.addUser(newUser);  // addUser là phương thức bạn cần định nghĩa trong adapter để thêm 1 người dùng vào
+                            }
+                        }
+                    }
+
+                    // Lưu danh sách vào SharedPreferences
+                    sharedPreferencesHelper.saveUsersToPreferences(userAdapter.getUsers());
 
                     if (!users.isEmpty()) {
                         since = users.get(users.size() - 1).getId();
@@ -155,6 +174,17 @@ public class MainActivity extends AppCompatActivity {
                 binding.progressBar.setVisibility(View.GONE);
             }
         });
+    }
+
+
+    // Kiểm tra người dùng đã có trong danh sách chưa
+    private boolean isUserDuplicate(List<User> users, User newUser) {
+        for (User existingUser : users) {
+            if (existingUser.getId() == newUser.getId()) {
+                return true; // Nếu đã tồn tại, trả về true
+            }
+        }
+        return false; // Nếu không tìm thấy, trả về false
     }
 
     @Override

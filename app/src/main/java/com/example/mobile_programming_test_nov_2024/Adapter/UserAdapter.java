@@ -26,12 +26,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public List<User> getUsers() {
         return userList;
     }
-    // Phương thức để thêm người dùng mới vào danh sách
-    public void addUsers(List<User> newUsers) {
-        // Thêm dữ liệu mới vào danh sách hiện tại
-        this.userList.addAll(newUsers);
-        // Thông báo adapter cập nhật dữ liệu
-        notifyDataSetChanged();
+    public void addUser(User newUser) {
+        userList.add(newUser);
+        notifyItemInserted(userList.size() - 1);
     }
 
     @NonNull
