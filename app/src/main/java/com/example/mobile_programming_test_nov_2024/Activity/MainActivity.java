@@ -14,7 +14,7 @@ import com.example.mobile_programming_test_nov_2024.api.GitHubApi;
 import com.example.mobile_programming_test_nov_2024.api.RetrofitClient;
 import com.example.mobile_programming_test_nov_2024.databinding.ActivityMainBinding;
 import com.example.mobile_programming_test_nov_2024.models.User;
-import com.example.mobile_programming_test_nov_2024.response.SharedPreferencesHelper;
+import com.example.mobile_programming_test_nov_2024.SharedPreferences.SharedPreferencesHelper;
 
 import java.util.List;
 
