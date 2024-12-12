@@ -8,6 +8,7 @@ public class User {
     private int followers;
     private int following;
     private int id;
+    private boolean check;
 
     // Constructor, getter and setter methods
 
@@ -19,14 +20,19 @@ public class User {
         this.followers = followers;
         this.following = following;
         this.id = id;
+        this.check = false;
+    }
+
+    public void setCheck(boolean check) {
+        this.check = check;
+    }
+
+    public boolean isCheck() {
+        return check;
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getLogin() {

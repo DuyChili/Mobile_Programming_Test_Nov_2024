@@ -34,7 +34,7 @@ public class SharedPreferencesHelper {
         for (User newUser : newUsers) {
             boolean exists = false;
             for (User existingUser : existingUsers) {
-                if (existingUser.getId() == newUser.getId()) {
+                if (existingUser.getId() == newUser.getId() ) {
                     exists = true;
                     break;
                 }
@@ -51,7 +51,6 @@ public class SharedPreferencesHelper {
         editor.apply();  // Áp dụng thay đổi
     }
 
-
     // Lấy danh sách người dùng từ SharedPreferences
     public List<User> getUsersFromPreferences() {
         String json = sharedPreferences.getString(CONTENT_TYPE_KEY, null);  // Lấy chuỗi JSON với khóa "Content-Type"
@@ -61,5 +60,31 @@ public class SharedPreferencesHelper {
         Gson gson = new Gson();
         return gson.fromJson(json, new TypeToken<List<User>>(){}.getType());  // Chuyển chuỗi JSON về danh sách đối tượng
     }
+
+    public void updateUserInPreferences(User updatedUser) {
+        List<User> existingUsers = getUsersFromPreferences();  // Lấy danh sách người dùng từ SharedPreferences
+
+        if (existingUsers == null) {
+            existingUsers = new ArrayList<>();
+        }
+
+        // Tìm người dùng có id trùng với updatedUser và cập nhật thông tin
+        for (int i = 0; i < existingUsers.size(); i++) {
+            User user = existingUsers.get(i);
+            if (user.getId() == updatedUser.getId()) {
+                // Cập nhật thông tin người dùng
+                updatedUser.setCheck(true);
+                existingUsers.set(i, updatedUser);
+                break;  // Đã tìm thấy và cập nhật xong
+            }
+        }
+
+        // Lưu lại danh sách đã cập nhật
+        Gson gson = new Gson();
+        String json = gson.toJson(existingUsers);
+        editor.putString(CONTENT_TYPE_KEY, json);  // Lưu lại với khóa "Content-Type"
+        editor.apply();  // Áp dụng thay đổi
+    }
+
 }
 
